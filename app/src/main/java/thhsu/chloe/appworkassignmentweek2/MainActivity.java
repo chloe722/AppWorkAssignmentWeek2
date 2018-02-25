@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setupOnClick((ImageButton) findViewById(R.id.button0),"0");
         setupOnClick((ImageButton) findViewById(R.id.button1),"1");
         setupOnClick((ImageButton) findViewById(R.id.button2),"2");
         setupOnClick((ImageButton) findViewById(R.id.button3), "3");
@@ -30,8 +33,11 @@ public class MainActivity extends AppCompatActivity {
         setupOnClick((ImageButton) findViewById(R.id.buttonMinus), "-");
         setupOnClick((ImageButton) findViewById(R.id.buttonTimes), "*");
         setupOnClick((ImageButton) findViewById(R.id.buttonDivide), "/");
+        setupOnClick((ImageButton) findViewById(R.id.buttonPoint),".");
+        //setupOnClick((ImageButton) findViewById(R.id.buttonPercent),"%");
         onClickEqual((ImageButton) findViewById(R.id.buttonEquals));
         onClickReset((ImageButton) findViewById(R.id.buttonC));
+        onClickPercent((ImageButton) findViewById(R.id.buttonPercent));
 
     }
 
@@ -40,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 calculate();
-            }
+        }
         });
     }
 
@@ -53,12 +59,35 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void onClickPercent(ImageButton button) {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView mathInput = (TextView) findViewById(R.id.mathInput);
+                TextView mathResult = (TextView) findViewById(R.id.mathResult);
+                String expressionText = (String) mathInput.getText();
+                Pattern percent = Pattern.compile("([\\d.]+)$");
+
+                Matcher m;
+                m = percent.matcher(expressionText);
+                if(m.find()){
+                    String num1 = m.group(1);
+                    Float x = Float.parseFloat(num1) / 100;
+                    expressionText = m.replaceAll(Float.toString(x));
+                    m = percent.matcher(expressionText);
+                }
+                mathResult.setText(expressionText);
+
+            }
+        });
+    }
+
     private void setupOnClick(ImageButton b, final String calSymbol) {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TextView mathInput = (TextView) findViewById(R.id.mathInput);
-                mathInput.setText(mathInput.getText()+ calSymbol);
+                mathInput.setText(mathInput.getText() + calSymbol);
             }
         });
     }
@@ -67,8 +96,58 @@ public class MainActivity extends AppCompatActivity {
         TextView mathInput = (TextView) findViewById(R.id.mathInput);
         TextView mathResult = (TextView) findViewById(R.id.mathResult);
         String expressionText = (String) mathInput.getText();
-        String[] expression = expressionText.split("(?=[+/*-])|(?<=[+/*-])");
-        mathResult.setText(String.join(",", expression));
+
+        Pattern multiply = Pattern.compile("([\\d.]+)[*]([\\d.]+)");
+        Pattern division = Pattern.compile("([\\d.]+)[/]([\\d.]+)");
+        Pattern minus = Pattern.compile("([\\d.]+)[-]([\\d.]+)");
+        Pattern plus = Pattern.compile("([\\d.]+)[+]([\\d.]+)");
+
+
+        Matcher m;
+        m = multiply.matcher(expressionText); // Initialize the matcher
+        while(m.find()){ // execute the matcher
+            String allMatch = m.group(0); // all match
+            String num1 = m.group(1);// first bracket is group 1
+            String num2 = m.group(2);// second bracket is group 2
+            Double x = Double.parseDouble(num1) * Double.parseDouble(num2);
+            expressionText = expressionText.replace(allMatch, Double.toString(x));
+            m = multiply.matcher(expressionText); // restart the match to look for new  mutiply string
+        }
+
+        m = division.matcher(expressionText);
+        while(m.find()){
+            String allMatch = m.group(0);
+            String num1 = m.group(1);
+            String num2 = m.group(2);
+            Double x = Double.parseDouble(num1) / Double.parseDouble(num2);
+            expressionText = expressionText.replace(allMatch, Double.toString(x));
+            m = division.matcher(expressionText);
+        }
+
+        m = minus.matcher(expressionText);
+        while(m.find()){
+            String allMatch = m.group(0);
+            String num1 = m.group(1);
+            String num2 = m.group(2);
+            Double x = Double.parseDouble(num1) - Double.parseDouble(num2);
+            expressionText = expressionText.replace(allMatch, Double.toString(x));
+            m = minus.matcher(expressionText);
+        }
+
+        m = plus.matcher(expressionText);
+        while(m.find()){
+            String allMatch = m.group(0);
+            String num1 = m.group(1);
+            String num2 = m.group(2);
+            Double x = Double.parseDouble(num1) + Double.parseDouble(num2);
+            expressionText = expressionText.replace(allMatch, Double.toString(x));
+            m = plus.matcher(expressionText);
+        }
+
+        if(expressionText.substring(expressionText.length()-2).equals(".0")){ // Retrieve if  string end with ".0"
+            expressionText = expressionText.substring(0, expressionText.length()-2); // If so, remove it
+        }
+        mathResult.setText(expressionText);
     }
 
     private void reset(){
@@ -77,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         mathResult.setText("");
         mathInput.setText("");
     }
+
 }
 
 
