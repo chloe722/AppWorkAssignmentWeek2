@@ -34,11 +34,9 @@ public class MainActivity extends AppCompatActivity {
         setupOnClick((ImageButton) findViewById(R.id.buttonTimes), "*");
         setupOnClick((ImageButton) findViewById(R.id.buttonDivide), "/");
         setupOnClick((ImageButton) findViewById(R.id.buttonPoint),".");
-        //setupOnClick((ImageButton) findViewById(R.id.buttonPercent),"%");
+        setupOnClick((ImageButton) findViewById(R.id.buttonPercent),"%");
         onClickEqual((ImageButton) findViewById(R.id.buttonEquals));
         onClickReset((ImageButton) findViewById(R.id.buttonC));
-        onClickPercent((ImageButton) findViewById(R.id.buttonPercent));
-
     }
 
     private void onClickEqual(ImageButton button) {
@@ -59,28 +57,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void onClickPercent(ImageButton button) {
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView mathInput = (TextView) findViewById(R.id.mathInput);
-                TextView mathResult = (TextView) findViewById(R.id.mathResult);
-                String expressionText = (String) mathInput.getText();
-                Pattern percent = Pattern.compile("([\\d.]+)$");
-
-                Matcher m;
-                m = percent.matcher(expressionText);
-                if(m.find()){
-                    String num1 = m.group(1);
-                    Float x = Float.parseFloat(num1) / 100;
-                    expressionText = m.replaceAll(Float.toString(x));
-                    m = percent.matcher(expressionText);
-                }
-                mathResult.setText(expressionText);
-
-            }
-        });
-    }
 
     private void setupOnClick(ImageButton b, final String calSymbol) {
         b.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 TextView mathInput = (TextView) findViewById(R.id.mathInput);
                 mathInput.setText(mathInput.getText() + calSymbol);
+                if(calSymbol.equals("%")){
+                    calculate();
+                }
             }
         });
     }
@@ -101,9 +80,19 @@ public class MainActivity extends AppCompatActivity {
         Pattern division = Pattern.compile("([\\d.]+)[/]([\\d.]+)");
         Pattern minus = Pattern.compile("([\\d.]+)[-]([\\d.]+)");
         Pattern plus = Pattern.compile("([\\d.]+)[+]([\\d.]+)");
+        Pattern percent = Pattern.compile("([\\d.]+)[%]");
 
 
         Matcher m;
+        m = percent.matcher(expressionText); // Initialize the matcher
+        while(m.find()){ // execute the matcher
+            String allMatch = m.group(0); // all match
+            String num1 = m.group(1);// first bracket is group
+            Double x = Double.parseDouble(num1) / 100;
+            expressionText = expressionText.replace(allMatch, Double.toString(x));
+            m = percent.matcher(expressionText); // restart the match to look for new  mutiply string
+        }
+
         m = multiply.matcher(expressionText); // Initialize the matcher
         while(m.find()){ // execute the matcher
             String allMatch = m.group(0); // all match
@@ -156,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
         mathResult.setText("");
         mathInput.setText("");
     }
+
 
 }
 
