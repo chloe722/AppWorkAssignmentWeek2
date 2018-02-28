@@ -33,12 +33,12 @@ public class MainActivity extends AppCompatActivity {
         setupOnClick((ImageButton) findViewById(R.id.button7), "7");
         setupOnClick((ImageButton) findViewById(R.id.button8), "8");
         setupOnClick((ImageButton) findViewById(R.id.button9), "9");
-        setupOnClick((ImageButton) findViewById(R.id.buttonPlus), "+");
-        setupOnClick((ImageButton) findViewById(R.id.buttonMinus), "-");
-        setupOnClick((ImageButton) findViewById(R.id.buttonTimes), "*");
-        setupOnClick((ImageButton) findViewById(R.id.buttonDivide), "/");
-        setupOnClick((ImageButton) findViewById(R.id.buttonPoint),".");
-        setupOnClick((ImageButton) findViewById(R.id.buttonPercent),"%");
+        setupSymbolOnClick((ImageButton) findViewById(R.id.buttonPlus), "+");
+        setupSymbolOnClick((ImageButton) findViewById(R.id.buttonMinus), "-");
+        setupSymbolOnClick((ImageButton) findViewById(R.id.buttonTimes), "*");
+        setupSymbolOnClick((ImageButton) findViewById(R.id.buttonDivide), "/");
+        setupSymbolOnClick((ImageButton) findViewById(R.id.buttonPoint),".");
+        setupSymbolOnClick((ImageButton) findViewById(R.id.buttonPercent),"%");
         onClickEqual((ImageButton) findViewById(R.id.buttonEquals));
         onClickReset((ImageButton) findViewById(R.id.buttonC));
     }
@@ -61,8 +61,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void setupOnClick(ImageButton b, final String digit) {
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView mathInput = (TextView) findViewById(R.id.mathInput);
+                mathInput.setText(mathInput.getText() + digit);
+            }
+        });
+    }
 
-    private void setupOnClick(ImageButton b, final String calSymbol) {
+    private void setupSymbolOnClick(ImageButton b, final String calSymbol) {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,13 +86,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    //preventing double click
     private boolean validInput(String calSymbol) {
         TextView mathInput = (TextView) findViewById(R.id.mathInput);
         String mathInputText = (String) mathInput.getText();
         if((mathInputText.length() == 0)){
             return true;
         }
-
         if((mathInputText.substring(mathInputText.length()-1).equals(calSymbol))){
             return false;
         }
