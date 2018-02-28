@@ -78,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         Pattern multiply = Pattern.compile("([\\d.]+)[*]([\\d.]+)");
         Pattern division = Pattern.compile("([\\d.]+)[/]([\\d.]+)");
-        Pattern minus = Pattern.compile("([\\d.]+)[-]([\\d.]+)");
-        Pattern plus = Pattern.compile("([\\d.]+)[+]([\\d.]+)");
+        Pattern minusPlus = Pattern.compile("(-?[\\d.]+)([-+])([\\d.]+)");
         Pattern percent = Pattern.compile("([\\d.]+)[%]");
 
 
@@ -113,25 +112,24 @@ public class MainActivity extends AppCompatActivity {
             m = division.matcher(expressionText);
         }
 
-        m = minus.matcher(expressionText);
+        m = minusPlus.matcher(expressionText);
         while(m.find()){
             String allMatch = m.group(0);
             String num1 = m.group(1);
-            String num2 = m.group(2);
-            Double x = Double.parseDouble(num1) - Double.parseDouble(num2);
-            expressionText = expressionText.replace(allMatch, Double.toString(x));
-            m = minus.matcher(expressionText);
-        }
+            String num2 = m.group(3);
+            String symbol = m.group(2);
 
-        m = plus.matcher(expressionText);
-        while(m.find()){
-            String allMatch = m.group(0);
-            String num1 = m.group(1);
-            String num2 = m.group(2);
+            if(symbol.equals("+")){
             Double x = Double.parseDouble(num1) + Double.parseDouble(num2);
             expressionText = expressionText.replace(allMatch, Double.toString(x));
-            m = plus.matcher(expressionText);
+            m = minusPlus.matcher(expressionText);}
+            else{
+                Double x = Double.parseDouble(num1) - Double.parseDouble(num2);
+                expressionText = expressionText.replace(allMatch, Double.toString(x));
+                m = minusPlus.matcher(expressionText);
+            }
         }
+
 
         if(expressionText.substring(expressionText.length()-2).equals(".0")){ // Retrieve if  string end with ".0"
             expressionText = expressionText.substring(0, expressionText.length()-2); // If so, remove it
