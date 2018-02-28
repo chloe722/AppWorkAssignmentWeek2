@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,13 +67,29 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 TextView mathInput = (TextView) findViewById(R.id.mathInput);
-                mathInput.setText(mathInput.getText() + calSymbol);
+                if(validInput(calSymbol)) {
+                    mathInput.setText(mathInput.getText() + calSymbol);
+                }
                 if(calSymbol.equals("%")){
                     calculate();
                 }
             }
         });
     }
+
+    private boolean validInput(String calSymbol) {
+        TextView mathInput = (TextView) findViewById(R.id.mathInput);
+        String mathInputText = (String) mathInput.getText();
+        if((mathInputText.length() == 0)){
+            return true;
+        }
+
+        if((mathInputText.substring(mathInputText.length()-1).equals(calSymbol))){
+            return false;
+        }
+        return true;
+    }
+
 
     private void calculate(){
         TextView mathInput = (TextView) findViewById(R.id.mathInput);
