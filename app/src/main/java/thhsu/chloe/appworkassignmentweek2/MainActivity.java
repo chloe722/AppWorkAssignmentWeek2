@@ -76,9 +76,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 TextView mathInput = (TextView) findViewById(R.id.mathInput);
-                if(validInput(calSymbol)) {
+                String mathInputText = (String) mathInput.getText();
+                String lastSymbol =  mathInputText.substring(mathInputText.length()-1);
+
+                if (lastSymbol.equals("+") | lastSymbol.equals("-") | lastSymbol.equals("*") | lastSymbol.equals("/") |lastSymbol.equals("%")){
+                    mathInput.setText(mathInputText.substring(0,mathInput.length()-1) + calSymbol); // replace last symbol
+                } else{
                     mathInput.setText(mathInput.getText() + calSymbol);
                 }
+
                 if(calSymbol.equals("%")){
                     calculate();
                 }
@@ -87,18 +93,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    //preventing double click
-    private boolean validInput(String calSymbol) {
-        TextView mathInput = (TextView) findViewById(R.id.mathInput);
-        String mathInputText = (String) mathInput.getText();
-        if((mathInputText.length() == 0)){
-            return true;
-        }
-        if((mathInputText.substring(mathInputText.length()-1).equals(calSymbol))){
-            return false;
-        }
-        return true;
-    }
 
 
     private void calculate(){
