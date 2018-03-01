@@ -3,6 +3,7 @@ package thhsu.chloe.appworkassignmentweek2;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -77,25 +78,32 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 TextView mathInput = (TextView) findViewById(R.id.mathInput);
                 String mathInputText = (String) mathInput.getText();
-                String lastSymbol =  mathInputText.substring(mathInputText.length()-1);
 
-                if (lastSymbol.equals("+") | lastSymbol.equals("-") | lastSymbol.equals("*") | lastSymbol.equals("/") |lastSymbol.equals("%")){
-                    mathInput.setText(mathInputText.substring(0,mathInput.length()-1) + calSymbol); // replace last symbol
-                } else{
-                    mathInput.setText(mathInput.getText() + calSymbol);
-                }
+                if (mathInputText.length() > 0) {
+                    String lastSymbol = mathInputText.substring(mathInputText.length() - 1); //get last symbol
 
-                if(calSymbol.equals("%")){
-                    calculate();
+                    if (lastSymbol.equals("+") | lastSymbol.equals("-") | lastSymbol.equals("*") | lastSymbol.equals("/") | lastSymbol.equals("%")| lastSymbol.equals(".")) {
+                        mathInput.setText(mathInputText.substring(0, mathInput.length() - 1) + calSymbol); // replace last symbol
+                    } else {
+                        mathInput.setText(mathInput.getText() + calSymbol);
+                    }
+                    if (calSymbol.equals("%")) {
+                        calculate();
+                    }
                 }
             }
         });
     }
 
-
-
-
     private void calculate(){
+        try{
+            _calculate();
+        }catch(Exception e){
+            Log.e("calculation error", e.getMessage());
+        }
+    }
+
+    private void _calculate(){
         TextView mathInput = (TextView) findViewById(R.id.mathInput);
         TextView mathResult = (TextView) findViewById(R.id.mathResult);
         String expressionText = (String) mathInput.getText();
