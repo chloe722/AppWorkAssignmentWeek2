@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.util.Log;
 
 import org.w3c.dom.Text;
 
@@ -100,7 +101,12 @@ public class MainActivity extends AppCompatActivity {
             _calculate();
         }catch(Exception e){
             Log.e("calculation error", e.getMessage());
+            alertErrorDialog();
         }
+    }
+
+    private void alertErrorDialog() {
+
     }
 
     private void _calculate(){
