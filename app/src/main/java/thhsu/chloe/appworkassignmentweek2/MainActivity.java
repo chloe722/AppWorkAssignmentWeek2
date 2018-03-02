@@ -1,17 +1,13 @@
 package thhsu.chloe.appworkassignmentweek2;
 
-import android.provider.ContactsContract;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.util.Log;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,7 +102,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void alertErrorDialog() {
-
+        AlertDialogFragment dialog = new AlertDialogFragment();
+        dialog.show(getFragmentManager(),"error_dialog");
     }
 
     private void _calculate(){
